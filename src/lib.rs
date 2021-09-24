@@ -75,31 +75,38 @@ impl Fødselsnummer {
 mod tests {
     use crate::Fødselsnummer;
 
+    fn fs(s: &str) -> Option<Fødselsnummer> {
+        Fødselsnummer::from_string(s)
+    }
+
     #[test]
     fn construction() {
-        assert_eq!(Fødselsnummer::from_string("s"), None);
-        assert_eq!(Fødselsnummer::from_string("abcdefghijk"), None);
-        assert_eq!(Fødselsnummer::from_string("00000000000"), Some(Fødselsnummer { value: 0 }));
-        assert_eq!(Fødselsnummer::from_string("00000000001"), Some(Fødselsnummer { value: 1 }));
-        assert_eq!(Fødselsnummer::from_string("00000000001x"), None);
-        assert_eq!(Fødselsnummer::from_string("10000000000"), Some(Fødselsnummer { value: 10000000000 }));
+        assert_eq!(fs("s"), None);
+        assert_eq!(fs("abcdefghijk"), None);
+        assert_eq!(fs("00000000000"), Some(Fødselsnummer { value: 0 }));
+        assert_eq!(fs("00000000001"), Some(Fødselsnummer { value: 1 }));
+        assert_eq!(fs("00000000001x"), None);
+        assert_eq!(
+            fs("10000000000"),
+            Some(Fødselsnummer { value: 10000000000 })
+        );
     }
 
     #[test]
     fn checksum() {
-        assert!(Fødselsnummer::from_string("02063626662").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("29085114474").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("22038538709").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("31032335430").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("31031670791").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("05061739582").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("25077648065").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("11051602872").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("30110618235").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("07045838387").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("06041579631").unwrap().is_valid_checksum());
-        assert!(Fødselsnummer::from_string("21016514958").unwrap().is_valid_checksum());
+        assert!(fs("02063626662").unwrap().is_valid_checksum());
+        assert!(fs("29085114474").unwrap().is_valid_checksum());
+        assert!(fs("22038538709").unwrap().is_valid_checksum());
+        assert!(fs("31032335430").unwrap().is_valid_checksum());
+        assert!(fs("31031670791").unwrap().is_valid_checksum());
+        assert!(fs("05061739582").unwrap().is_valid_checksum());
+        assert!(fs("25077648065").unwrap().is_valid_checksum());
+        assert!(fs("11051602872").unwrap().is_valid_checksum());
+        assert!(fs("30110618235").unwrap().is_valid_checksum());
+        assert!(fs("07045838387").unwrap().is_valid_checksum());
+        assert!(fs("06041579631").unwrap().is_valid_checksum());
+        assert!(fs("21016514958").unwrap().is_valid_checksum());
 
-        assert!(!Fødselsnummer::from_string("21016514959").unwrap().is_valid_checksum());
+        assert!(!fs("21016514959").unwrap().is_valid_checksum());
     }
 }
