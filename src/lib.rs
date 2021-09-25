@@ -19,11 +19,12 @@ impl Fødselsnummer {
     }
 
     pub fn calculate_checksum(&self) -> Option<u64> {
-        fn check_number(digit: u64) -> Option<u64> {
-            match digit {
-                0 => Some(0),
-                1 => None,
-                n => Some(11 - n),
+        fn check_digit(partial_sum: u64) -> Option<u64> {
+            match 11 - (partial_sum % 11) {
+                11 => Some(0),
+                10 => None,
+                n if n < 10 => Some(n),
+                _ => unreachable!("n can't be less than zero after 11 - x mod 11"),
             }
         }
 
@@ -38,23 +39,21 @@ impl Fødselsnummer {
             digits.push(digit);
         }
 
-        let k1 = check_number(
+        let k1 = check_digit(
             vec![3, 7, 6, 1, 8, 9, 4, 5, 2]
                 .iter()
                 .zip(&digits)
                 .map(|(f, d)| (f * d) as u64)
-                .sum::<u64>()
-                % 11,
+                .sum::<u64>(),
         )?;
         digits.push(k1);
 
-        let k2: u64 = check_number(
+        let k2: u64 = check_digit(
             vec![5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
                 .iter()
                 .zip(&digits)
                 .map(|(f, d)| f * d)
-                .sum::<u64>()
-                % 11,
+                .sum::<u64>(),
         )?;
 
         Some(k1 * 10 + k2)
