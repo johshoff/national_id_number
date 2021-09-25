@@ -18,16 +18,17 @@ impl Fødselsnummer {
         }
     }
 
-    pub fn calculate_checksum(&self) -> u64 {
-        fn check_number(digit: u64) -> u64 {
+    pub fn calculate_checksum(&self) -> Option<u64> {
+        fn check_number(digit: u64) -> Option<u64> {
             match digit {
-                0 => 0,
-                n => 11 - n,
+                0 => Some(0),
+                1 => None,
+                n => Some(11 - n),
             }
         }
 
         let mut divisor = 10000000000;
-        let mut digits = vec![];
+        let mut digits = Vec::with_capacity(10);
         let mut remaining = self.value;
         for _ in 0..9 {
             // get all values except checksum
@@ -44,7 +45,7 @@ impl Fødselsnummer {
                 .map(|(f, d)| (f * d) as u64)
                 .sum::<u64>()
                 % 11,
-        );
+        )?;
         digits.push(k1);
 
         let k2: u64 = check_number(
@@ -54,16 +55,19 @@ impl Fødselsnummer {
                 .map(|(f, d)| f * d)
                 .sum::<u64>()
                 % 11,
-        );
+        )?;
 
-        k1 * 10 + k2
+        Some(k1 * 10 + k2)
     }
 
     pub fn is_valid_checksum(&self) -> bool {
-        let calc_checksum = self.calculate_checksum();
-        let actual_checksum = self.value % 100;
+        if let Some(calc_checksum) = self.calculate_checksum() {
+            let actual_checksum = self.value % 100;
 
-        calc_checksum == actual_checksum
+            calc_checksum == actual_checksum
+        } else {
+            false
+        }
     }
 
     pub fn get_type(&self) -> Type {
@@ -94,6 +98,21 @@ mod tests {
 
     #[test]
     fn checksum() {
+        // test checksum with "explanation" (cd=check_digit). Looking at k1 only (k2 effect cancelled)
+        assert_eq!(fs("30110618200").unwrap().calculate_checksum(), Some(35)); // cd=8   11 - 8 = 3
+        assert_eq!(fs("30120618200").unwrap().calculate_checksum(), Some(25)); // cd=9   11 - 9 = 2
+        assert_eq!(fs("30130618200").unwrap().calculate_checksum(), Some(15)); // cd=10  11 -10 = 1
+        assert_eq!(fs("30140618200").unwrap().calculate_checksum(), Some(05)); // cd=0   11 - 0 =11
+        assert_eq!(fs("30150618200").unwrap().calculate_checksum(), None); //     cd=1   11 - 1 =10
+        assert_eq!(fs("30160618200").unwrap().calculate_checksum(), Some(95)); // cd=2   11 - 2 = 9
+        assert_eq!(fs("30170618200").unwrap().calculate_checksum(), Some(85)); // cd=3   11 - 3 = 8
+        assert_eq!(fs("30180618200").unwrap().calculate_checksum(), Some(75)); // cd=4   11 - 4 = 7
+        assert_eq!(fs("30190618200").unwrap().calculate_checksum(), Some(65)); // cd=5   11 - 5 = 6
+        assert_eq!(fs("30100618200").unwrap().calculate_checksum(), Some(45)); // cd=7   11 - 7 = 4
+    }
+
+    #[test]
+    fn valid_checksum() {
         assert!(fs("02063626662").unwrap().is_valid_checksum());
         assert!(fs("29085114474").unwrap().is_valid_checksum());
         assert!(fs("22038538709").unwrap().is_valid_checksum());
