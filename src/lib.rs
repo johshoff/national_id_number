@@ -26,13 +26,10 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
     fn get_digits(value: u64) -> [u64; 10] {
         let mut divisor = 10000000000;
         let mut digits = [0u64; 10];
-        let mut remaining = value;
         for i in 0..9 {
             // get all values except checksum
-            let digit = remaining / divisor;
-            remaining -= digit * divisor;
+            digits[i] = (value / divisor) % 10;
             divisor /= 10;
-            digits[i] = digit;
         }
         digits
     }
