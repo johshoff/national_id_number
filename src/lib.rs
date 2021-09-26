@@ -161,18 +161,9 @@ mod tests {
 
     #[test]
     fn valid_checksum() {
-        assert!(fs("02063626662").unwrap().is_valid_checksum());
-        assert!(fs("29085114474").unwrap().is_valid_checksum());
-        assert!(fs("22038538709").unwrap().is_valid_checksum());
-        assert!(fs("31032335430").unwrap().is_valid_checksum());
-        assert!(fs("31031670791").unwrap().is_valid_checksum());
-        assert!(fs("05061739582").unwrap().is_valid_checksum());
-        assert!(fs("25077648065").unwrap().is_valid_checksum());
-        assert!(fs("11051602872").unwrap().is_valid_checksum());
-        assert!(fs("30110618235").unwrap().is_valid_checksum());
-        assert!(fs("07045838387").unwrap().is_valid_checksum());
-        assert!(fs("06041579631").unwrap().is_valid_checksum());
-        assert!(fs("21016514958").unwrap().is_valid_checksum());
+        for line in include_str!("../tests/data/valid.txt").lines() {
+            assert!(fs(line).unwrap().is_valid_checksum());
+        }
 
         assert!(!fs("21016514959").unwrap().is_valid_checksum());
     }
