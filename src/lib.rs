@@ -23,14 +23,14 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
     }
 
     let mut divisor = 10000000000;
-    let mut digits = Vec::with_capacity(10);
+    let mut digits = [0u64; 10];
     let mut remaining = value;
-    for _ in 0..9 {
+    for i in 0..9 {
         // get all values except checksum
         let digit = remaining / divisor;
         remaining -= digit * divisor;
         divisor /= 10;
-        digits.push(digit);
+        digits[i] = digit;
     }
 
     let k1 = check_digit(
@@ -40,7 +40,7 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
             .map(|(f, d)| (f * d) as u64)
             .sum::<u64>(),
     )?;
-    digits.push(k1);
+    digits[9] = k1;
 
     let k2: u64 = check_digit(
         vec![5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
