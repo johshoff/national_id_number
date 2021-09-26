@@ -1,9 +1,9 @@
 #[derive(PartialEq, Eq, Debug)]
-struct Fødselsnummer {
+pub struct Fødselsnummer {
     value: u64,
 }
 
-enum Type {
+pub enum Type {
     Normal,
     DNumber,
     HNumber,
