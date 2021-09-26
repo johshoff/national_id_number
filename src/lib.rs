@@ -34,7 +34,7 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
     }
 
     let k1 = check_digit(
-        vec![3, 7, 6, 1, 8, 9, 4, 5, 2]
+        [3, 7, 6, 1, 8, 9, 4, 5, 2]
             .iter()
             .zip(&digits)
             .map(|(f, d)| (f * d) as u64)
@@ -43,7 +43,7 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
     digits[9] = k1;
 
     let k2: u64 = check_digit(
-        vec![5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+        [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
             .iter()
             .zip(&digits)
             .map(|(f, d)| f * d)
