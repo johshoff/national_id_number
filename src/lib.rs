@@ -37,7 +37,7 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
         [3, 7, 6, 1, 8, 9, 4, 5, 2]
             .iter()
             .zip(&digits)
-            .map(|(f, d)| (f * d) as u64)
+            .map(|(f, d)| f * d)
             .sum::<u64>(),
     )?;
     digits[9] = k1;
@@ -138,10 +138,7 @@ mod tests {
         assert_eq!(fs("00000000000"), Some(NationalId { value: 0 }));
         assert_eq!(fs("00000000001"), Some(NationalId { value: 1 }));
         assert_eq!(fs("00000000001x"), None);
-        assert_eq!(
-            fs("10000000000"),
-            Some(NationalId { value: 10000000000 })
-        );
+        assert_eq!(fs("10000000000"), Some(NationalId { value: 10000000000 }));
     }
 
     #[test]
