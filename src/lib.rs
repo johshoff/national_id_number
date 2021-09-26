@@ -1,5 +1,5 @@
 #[derive(PartialEq, Eq, Debug)]
-pub struct Fødselsnummer {
+pub struct NationalId {
     value: u64,
 }
 
@@ -53,18 +53,18 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
     Some(k1 * 10 + k2)
 }
 
-impl Fødselsnummer {
-    pub fn new(value: u64) -> Option<Fødselsnummer> {
+impl NationalId {
+    pub fn new(value: u64) -> Option<NationalId> {
         if value < 100000000000 {
-            Some(Fødselsnummer { value })
+            Some(NationalId { value })
         } else {
             None
         }
     }
 
-    pub fn from_string(s: &str) -> Option<Fødselsnummer> {
+    pub fn from_string(s: &str) -> Option<NationalId> {
         if s.len() == 11 {
-            s.parse::<u64>().ok().map(|value| Fødselsnummer { value })
+            s.parse::<u64>().ok().map(|value| NationalId { value })
         } else {
             None
         }
@@ -119,13 +119,13 @@ impl Fødselsnummer {
 mod tests {
     use crate::*;
 
-    fn fs(s: &str) -> Option<Fødselsnummer> {
-        Fødselsnummer::from_string(s)
+    fn fs(s: &str) -> Option<NationalId> {
+        NationalId::from_string(s)
     }
 
-    // Fødselsnummer from number without checksum
-    fn fs_wo(value: u64) -> Fødselsnummer {
-        Fødselsnummer::new(
+    // NationalId from number without checksum
+    fn fs_wo(value: u64) -> NationalId {
+        NationalId::new(
             value * 100 + calculate_checksum(value).expect("expected valid checksum for test date"),
         )
         .expect("expected valid number for test data")
@@ -135,12 +135,12 @@ mod tests {
     fn construction() {
         assert_eq!(fs("s"), None);
         assert_eq!(fs("abcdefghijk"), None);
-        assert_eq!(fs("00000000000"), Some(Fødselsnummer { value: 0 }));
-        assert_eq!(fs("00000000001"), Some(Fødselsnummer { value: 1 }));
+        assert_eq!(fs("00000000000"), Some(NationalId { value: 0 }));
+        assert_eq!(fs("00000000001"), Some(NationalId { value: 1 }));
         assert_eq!(fs("00000000001x"), None);
         assert_eq!(
             fs("10000000000"),
-            Some(Fødselsnummer { value: 10000000000 })
+            Some(NationalId { value: 10000000000 })
         );
     }
 
