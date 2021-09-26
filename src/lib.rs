@@ -22,16 +22,22 @@ pub fn calculate_checksum(value: u64) -> Option<u64> {
         }
     }
 
-    let mut divisor = 10000000000;
-    let mut digits = [0u64; 10];
-    let mut remaining = value;
-    for i in 0..9 {
-        // get all values except checksum
-        let digit = remaining / divisor;
-        remaining -= digit * divisor;
-        divisor /= 10;
-        digits[i] = digit;
+    // #[inline(never)] // for profiling
+    fn get_digits(value: u64) -> [u64; 10] {
+        let mut divisor = 10000000000;
+        let mut digits = [0u64; 10];
+        let mut remaining = value;
+        for i in 0..9 {
+            // get all values except checksum
+            let digit = remaining / divisor;
+            remaining -= digit * divisor;
+            divisor /= 10;
+            digits[i] = digit;
+        }
+        digits
     }
+
+    let mut digits = get_digits(value);
 
     let k1 = check_digit(
         [3, 7, 6, 1, 8, 9, 4, 5, 2]
